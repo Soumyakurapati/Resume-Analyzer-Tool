@@ -1,46 +1,57 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Resume Analyzer Tool</title>
-    <link rel="stylesheet" href="style.css">
+<title>AI Resume Analyzer</title>
+<link rel="stylesheet" href="style.css">
 </head>
 
 <body>
 
+
 <div class="container">
 
-<h1>Resume Analyzer Tool</h1>
 
-<p>Created by: Soumya Kurapati</p>
-<p>Email: kurapatisoumya441@gmail.com</p>
-<p>
-Upload your resume and get instant analysis, score and improvement suggestions.
-</p>
+<h1>🚀 AI Resume Analyzer</h1>
+
+<p>Analyze your resume and improve your job readiness</p>
+
 
 <input type="file" id="pdfFile" accept=".pdf">
 
-<label for="pdfFile" class="file-label">
-    Upload Resume PDF
+
+<label for="pdfFile" class="upload">
+Upload Resume PDF
 </label>
 
-<br>
 
-<textarea id="resumeText" placeholder="Upload PDF or paste your resume here..."></textarea>
-<button onclick="analyzeResume()">Analyze Resume</button>
+
+<textarea id="resumeText"
+placeholder="Resume text will appear here..."></textarea>
+
+
+<textarea id="jobDesc"
+placeholder="Paste Job Description here..."></textarea>
+
+
+<button onclick="analyzeResume()">
+Analyze Resume
+</button>
+
+
 
 <div id="result"></div>
 
-<br>
-
-<a href="https://digitalheroesco.com">
-<button>Built for Digital Heroes</button>
-</a>
 
 
 </div>
 
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+
 <script src="script.js"></script>
 
+
 </body>
+
 </html>

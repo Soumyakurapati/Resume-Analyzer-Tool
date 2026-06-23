@@ -1,51 +1,53 @@
-document.getElementById("pdfFile").addEventListener("change", function(event){
 
-let file = event.target.files[0];
-
-
-if(file && file.type === "application/pdf"){
+document
+.getElementById("pdfFile")
+.addEventListener("change",function(e){
 
 
-let reader = new FileReader();
+let file=e.target.files[0];
 
 
-reader.onload = function(){
-
-let typedarray = new Uint8Array(this.result);
+let reader=new FileReader();
 
 
-pdfjsLib.getDocument(typedarray).promise.then(function(pdf){
+reader.onload=function(){
 
 
-let text = "";
+let typedarray=new Uint8Array(this.result);
+
+
+pdfjsLib
+.getDocument(typedarray)
+.promise
+.then(async function(pdf){
+
+
+let text="";
 
 
 for(let i=1;i<=pdf.numPages;i++){
 
 
-pdf.getPage(i).then(function(page){
+let page=await pdf.getPage(i);
 
 
-page.getTextContent().then(function(content){
+let content=await page.getTextContent();
 
 
-content.items.forEach(function(item){
+content.items.forEach(item=>{
 
-text += item.str + " ";
-
-});
-
-
-document.getElementById("resumeText").value = text;
-
-
-});
-
+text += item.str+" ";
 
 });
 
 
 }
+
+
+document
+.getElementById("resumeText")
+.value=text;
+
 
 
 });
@@ -57,74 +59,260 @@ document.getElementById("resumeText").value = text;
 reader.readAsArrayBuffer(file);
 
 
+});
+
+
+
+
+
+
+function analyzeResume(){
+
+
+
+let resume=document
+.getElementById("resumeText")
+.value
+.toLowerCase();
+
+
+
+let job=document
+.getElementById("jobDesc")
+.value
+.toLowerCase();
+
+
+
+let score=0;
+
+
+
+let skills=[
+
+"javascript",
+"react",
+"html",
+"css",
+"java",
+"python",
+"node",
+"sql",
+"mongodb",
+"github",
+"git",
+"api",
+"aws"
+
+];
+
+
+
+let foundSkills=[];
+
+let missingSkills=[];
+
+
+
+skills.forEach(skill=>{
+
+
+if(resume.includes(skill)){
+
+
+score+=5;
+
+foundSkills.push(skill);
+
+
+}
+
+else{
+
+missingSkills.push(skill);
+
+
 }
 
 
 });
 
-function analyzeResume(){
-
-let resume = document.getElementById("resumeText").value.toLowerCase();
-
-let score = 0;
-let missing = [];
 
 
-let checks = {
-"skills":15,
-"education":15,
-"projects":15,
-"experience":15,
-"certificate":10,
-"github":5,
-"linkedin":5
-};
 
 
-// check normal sections
-for(let item in checks){
+let sections=[
 
-if(resume.includes(item)){
-score += checks[item];
+
+"education",
+"experience",
+"projects",
+"certificate",
+"linkedin"
+
+
+];
+
+
+
+let missingSections=[];
+
+
+
+sections.forEach(section=>{
+
+
+if(resume.includes(section)){
+
+
+score+=5;
+
+
 }
 
 else{
-missing.push(item);
-}
+
+
+missingSections.push(section);
+
 
 }
 
 
-// check email separately
-if(resume.includes("@")){
-score += 5;
+});
+
+
+
+
+
+let match=0;
+
+
+
+if(job.length>0){
+
+
+skills.forEach(skill=>{
+
+
+if(job.includes(skill) && resume.includes(skill)){
+
+
+match+=5;
+
+
 }
+
+
+});
+
+
+}
+
+
+
+score=Math.min(score+match,100);
+
+
+
+
+
+let level;
+
+
+
+if(score>=80){
+
+level="🔥 Excellent Resume";
+
+}
+
+else if(score>=60){
+
+level="👍 Good Resume";
+
+}
+
 else{
-missing.push("email");
+
+level="⚠ Needs Improvement";
+
 }
 
 
 
-document.getElementById("result").innerHTML =
+
+
+
+document
+.getElementById("result")
+.innerHTML=
+
 
 `
-<h2>Resume Score: ${score}/100</h2>
 
-<h3>Missing Sections:</h3>
+<h2>${level}</h2>
+
+
+<h1>${score}/100 ATS Score</h1>
+
+
+
+<h3>Detected Skills</h3>
 
 <p>
-${missing.length ? missing.join(", ") : "No missing sections 🎉"}
+
+${foundSkills.join(", ")}
+
 </p>
 
-<h3>Suggestions:</h3>
+
+
+
+<h3>Missing Skills</h3>
 
 <p>
-${score < 70 
-? "Add missing sections to improve your resume."
-: "Great resume! Keep improving your skills and achievements."
+
+${missingSkills.join(", ")}
+
+</p>
+
+
+
+
+<h3>Missing Sections</h3>
+
+<p>
+
+${missingSections.join(", ")}
+
+</p>
+
+
+
+
+<h3>AI Suggestions</h3>
+
+<p>
+
+${score<70
+
+?
+
+"Add projects, measurable achievements, GitHub links and required skills."
+
+:
+
+"Your resume looks strong. Improve with better impact statements and keywords."
+
 }
+
+
 </p>
+
 
 `;
+
+
 
 }
